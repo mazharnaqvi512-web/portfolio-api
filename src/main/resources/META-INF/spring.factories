@@ -1,0 +1,2 @@
+org.springframework.boot.env.EnvironmentPostProcessor=com.mazhar.portfolio.config.ProductionDatabaseGuard
+org.springframework.boot.diagnostics.FailureAnalyzer=com.mazhar.portfolio.config.ProductionDatabaseFailureAnalyzer

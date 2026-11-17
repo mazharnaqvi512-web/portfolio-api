@@ -1,0 +1,98 @@
+[
+  {
+    "company": "Bajco Technologies",
+    "role": "Senior Frontend Engineer",
+    "employmentType": "full-time",
+    "location": "Islamabad, Pakistan",
+    "startDate": "2025-05",
+    "endDate": null,
+    "description": "Leading frontend development of Meal Dynamics, an enterprise-scale food service management platform built with Angular 17+, TypeScript, Angular Material, PrimeNG and SCSS.",
+    "responsibilities": [
+      "Design and implement reusable, modular components and custom directives to improve maintainability, scalability and development efficiency across the application.",
+      "Integrate and consume RESTful APIs built with ASP.NET/.NET for reliable data exchange between frontend and backend.",
+      "Collaborate with backend developers, QA engineers, UI/UX designers and business stakeholders to turn business requirements into scalable technical solutions.",
+      "Use Claude AI and Cursor AI to speed up development, debugging, refactoring and documentation while keeping engineering standards high.",
+      "Take part in Agile/Scrum ceremonies: sprint planning, estimation, backlog refinement and daily stand-ups."
+    ],
+    "technologies": [
+      "Angular",
+      "TypeScript",
+      "Angular Material",
+      "PrimeNG",
+      "SCSS",
+      ".NET REST APIs"
+    ],
+    "keyContributions": [],
+    "categories": [
+      "frontend",
+      "angular",
+      "enterprise"
+    ]
+  },
+  {
+    "company": "HyperNym",
+    "role": "Senior Frontend Developer",
+    "employmentType": "full-time",
+    "location": "Islamabad, Pakistan",
+    "startDate": "2023-09",
+    "endDate": "2025-04",
+    "description": "Developed and maintained enterprise-scale Fleet Management System (FMS) applications using Angular 14+, TypeScript, PrimeNG, AG Grid, .NET REST APIs and MySQL.",
+    "responsibilities": [
+      "Built interactive dashboards for real-time vehicle tracking, fleet monitoring, driver management, fuel consumption, maintenance scheduling and operational analytics.",
+      "Developed reusable Angular components, custom directives and a modular UI architecture to improve maintainability, scalability and development efficiency.",
+      "Worked closely with backend engineers, QA teams and business analysts to deliver enterprise solutions following Agile methodologies."
+    ],
+    "technologies": [
+      "Angular",
+      "TypeScript",
+      "PrimeNG",
+      "AG Grid",
+      ".NET REST APIs",
+      "MySQL"
+    ],
+    "keyContributions": [
+      "Fleet Management System (FMS): IoT-enabled modules for real-time GPS vehicle tracking, driver management, trip monitoring, fuel management, maintenance tracking, alerts and operational reporting.",
+      "SCAD Census: enterprise web application for the Statistics Centre Abu Dhabi that visualizes real-time census and demographic data, with responsive English/Arabic interfaces and RTL support."
+    ],
+    "categories": [
+      "frontend",
+      "angular",
+      "enterprise"
+    ]
+  },
+  {
+    "company": "Veroke Technologies",
+    "role": "Frontend Developer",
+    "employmentType": "full-time",
+    "location": "Islamabad, Pakistan",
+    "startDate": "2020-12",
+    "endDate": "2023-09",
+    "description": "Frontend developer on CMS and B2C platforms for clients in Qatar, Kuwait and Oman.",
+    "responsibilities": [
+      "Delivered robust CMS and B2C platforms using Angular, Node.js, MySQL and Socket.io.",
+      "Worked across healthcare, investment, event-management and virtual-event products."
+    ],
+    "technologies": [
+      "Angular",
+      "Node.js",
+      "MySQL",
+      "Socket.io"
+    ],
+    "keyContributions": [
+      "Tabib Group: healthcare communication platform for doctor-patient interactions and medical service management.",
+      "ThriftPlan: investment platform for employers and employees, focused on stock opportunities.",
+      "Art Station: event management platform for artists, exhibitions, workshops and event bookings across the Middle East.",
+      "VirtualTradeShow: online platform for workshops, seminars and virtual classes."
+    ],
+    "categories": [
+      "frontend",
+      "angular"
+    ],
+    "projectLinks": [
+      {
+        "label": "Tabib Group",
+        "url": "https://tabibgroup.net/"
+      }
+    ]
+  }
+]

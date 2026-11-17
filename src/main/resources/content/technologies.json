@@ -1,0 +1,219 @@
+[
+  {
+    "name": "Angular",
+    "category": "frontend-engineering",
+    "level": "primary",
+    "description": "Building enterprise-grade single-page applications with standalone components, signals and modern control flow.",
+    "featured": true
+  },
+  {
+    "name": "TypeScript",
+    "category": "frontend-engineering",
+    "level": "primary",
+    "description": "Writing strongly-typed, maintainable application code across the entire frontend stack.",
+    "featured": true
+  },
+  {
+    "name": "JavaScript",
+    "category": "frontend-engineering",
+    "level": "strong",
+    "description": "Core language fundamentals underpinning all frontend and tooling work.",
+    "featured": false
+  },
+  {
+    "name": "HTML5",
+    "category": "frontend-engineering",
+    "level": "strong",
+    "description": "Semantic, accessible markup as the foundation of every UI built.",
+    "featured": false
+  },
+  {
+    "name": "CSS3",
+    "category": "frontend-engineering",
+    "level": "strong",
+    "description": "Modern layout and styling techniques, including Grid, Flexbox and custom properties.",
+    "featured": false
+  },
+  {
+    "name": "SCSS",
+    "category": "frontend-engineering",
+    "level": "strong",
+    "description": "Structured, maintainable stylesheets for component-scoped styling.",
+    "featured": false
+  },
+  {
+    "name": "SignalR",
+    "category": "frontend-engineering",
+    "level": "strong",
+    "description": "Real-time updates in enterprise web applications.",
+    "featured": false
+  },
+  {
+    "name": "Socket.IO",
+    "category": "frontend-engineering",
+    "level": "working-knowledge",
+    "description": "Real-time, event-driven features in web applications.",
+    "featured": false
+  },
+  {
+    "name": "RxJS",
+    "category": "state-management",
+    "level": "strong",
+    "description": "Managing asynchronous data streams and complex UI state with observables.",
+    "featured": true
+  },
+  {
+    "name": "NgRx",
+    "category": "state-management",
+    "level": "strong",
+    "description": "Applied for predictable state management in larger Angular applications.",
+    "featured": false
+  },
+  {
+    "name": "PrimeNG",
+    "category": "ui-frameworks",
+    "level": "strong",
+    "description": "Building polished, accessible UI with a themeable enterprise component library.",
+    "featured": true
+  },
+  {
+    "name": "Angular Material",
+    "category": "ui-frameworks",
+    "level": "strong",
+    "description": "Building enterprise interfaces with Material Design components for rapid, accessible UI development.",
+    "featured": false
+  },
+  {
+    "name": "AG Grid",
+    "category": "ui-frameworks",
+    "level": "strong",
+    "description": "Data-heavy enterprise grids for dashboards and reports.",
+    "featured": false
+  },
+  {
+    "name": "Bootstrap",
+    "category": "ui-frameworks",
+    "level": "working-knowledge",
+    "description": "Responsive layouts and components with Bootstrap.",
+    "featured": false
+  },
+  {
+    "name": "amCharts",
+    "category": "ui-frameworks",
+    "level": "working-knowledge",
+    "description": "Data visualization for interactive dashboards and reports.",
+    "featured": false
+  },
+  {
+    "name": "Tailwind CSS",
+    "category": "ui-frameworks",
+    "level": "strong",
+    "description": "Utility-first styling for consistent, design-token-driven interfaces.",
+    "featured": true
+  },
+  {
+    "name": "Java",
+    "category": "backend",
+    "level": "learning",
+    "description": "Currently building backend fundamentals to support a full-stack trajectory.",
+    "featured": true
+  },
+  {
+    "name": "Spring Boot",
+    "category": "backend",
+    "level": "learning",
+    "description": "Learning to design and build REST APIs as part of an Enterprise Full Stack path.",
+    "featured": true
+  },
+  {
+    "name": "REST APIs",
+    "category": "backend",
+    "level": "working-knowledge",
+    "description": "Designing and consuming REST endpoints from the frontend, with growing backend exposure.",
+    "featured": false
+  },
+  {
+    "name": "AI Integration",
+    "category": "ai",
+    "level": "learning",
+    "description": "Exploring how to integrate AI capabilities into production applications.",
+    "featured": true
+  },
+  {
+    "name": "Prompt Engineering",
+    "category": "ai",
+    "level": "learning",
+    "description": "Developing effective prompting techniques for AI-assisted workflows.",
+    "featured": false
+  },
+  {
+    "name": "AI-assisted Development",
+    "category": "ai",
+    "level": "strong",
+    "description": "Using AI tools daily to accelerate development while maintaining code quality.",
+    "featured": false
+  },
+  {
+    "name": "Azure DevOps",
+    "category": "cloud-devops",
+    "level": "working-knowledge",
+    "description": "Familiar with Azure DevOps pipelines and work-item tracking.",
+    "featured": false
+  },
+  {
+    "name": "Docker",
+    "category": "cloud-devops",
+    "level": "working-knowledge",
+    "description": "Containerizing applications for consistent local and deployment environments.",
+    "featured": true
+  },
+  {
+    "name": "Git",
+    "category": "development-tools",
+    "level": "strong",
+    "description": "Version control and branching workflows for team-based development.",
+    "featured": true
+  },
+  {
+    "name": "GitHub",
+    "category": "development-tools",
+    "level": "strong",
+    "description": "Collaboration, code review and CI/CD workflows on GitHub.",
+    "featured": false
+  },
+  {
+    "name": "Jasmine & Karma",
+    "category": "development-tools",
+    "level": "working-knowledge",
+    "description": "Unit testing Angular code with Jasmine and Karma.",
+    "featured": false
+  },
+  {
+    "name": "Jira",
+    "category": "development-tools",
+    "level": "working-knowledge",
+    "description": "Agile/Scrum planning, estimation and backlog tracking.",
+    "featured": false
+  },
+  {
+    "name": "Postman",
+    "category": "development-tools",
+    "level": "working-knowledge",
+    "description": "API testing and documentation during frontend-backend integration.",
+    "featured": false
+  },
+  {
+    "name": "Figma",
+    "category": "development-tools",
+    "level": "working-knowledge",
+    "description": "Translating design files into pixel-accurate, responsive implementations.",
+    "featured": false
+  },
+  {
+    "name": "VS Code",
+    "category": "development-tools",
+    "level": "strong",
+    "description": "Primary development environment, configured for an Angular/TypeScript workflow.",
+    "featured": false
+  }
+]

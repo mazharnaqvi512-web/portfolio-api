@@ -1,0 +1,157 @@
+[
+  {
+    "name": "Meal Dynamics",
+    "slug": "meal-dynamics",
+    "shortDescription": "Enterprise-scale food service management platform. I lead its frontend development at Bajco Technologies.",
+    "category": "enterprise-applications",
+    "technologyStack": [
+      "Angular",
+      "TypeScript",
+      "Angular Material",
+      "PrimeNG",
+      "SCSS"
+    ],
+    "role": "Senior Frontend Engineer (frontend lead)",
+    "projectType": "Enterprise web platform",
+    "businessDomain": "Food Service Management",
+    "featured": true,
+    "filterTags": [
+      "angular",
+      "enterprise"
+    ],
+    "overview": "Meal Dynamics is an enterprise-scale food service management platform. I lead its frontend development, building reusable, modular components and custom directives, and integrating with RESTful APIs built on ASP.NET/.NET while working with backend developers, QA engineers, designers and business stakeholders."
+  },
+  {
+    "name": "Fleet Management System (FMS)",
+    "slug": "fleet-management-system",
+    "shortDescription": "IoT-enabled fleet management platform with real-time GPS vehicle tracking and operational dashboards.",
+    "category": "fleet-management",
+    "technologyStack": [
+      "Angular",
+      "TypeScript",
+      "PrimeNG",
+      "AG Grid",
+      ".NET REST APIs",
+      "MySQL"
+    ],
+    "role": "Senior Frontend Developer",
+    "projectType": "Enterprise web platform",
+    "businessDomain": "Fleet Management (IoT)",
+    "featured": true,
+    "filterTags": [
+      "angular",
+      "enterprise",
+      "dashboard"
+    ],
+    "overview": "Enterprise-scale Fleet Management System built at HyperNym. I developed IoT-enabled frontend modules and interactive dashboards for real-time vehicle tracking, fleet monitoring and operational analytics, on reusable Angular components and a modular UI architecture.",
+    "keyFeatures": [
+      "Real-time GPS vehicle tracking",
+      "Driver management",
+      "Trip monitoring",
+      "Fuel management and consumption",
+      "Maintenance tracking and scheduling",
+      "Alerts",
+      "Operational reporting and analytics"
+    ]
+  },
+  {
+    "name": "SCAD Census",
+    "slug": "scad-census",
+    "shortDescription": "Real-time census and demographic dashboards for the Statistics Centre Abu Dhabi, in English and Arabic.",
+    "category": "dashboards",
+    "technologyStack": [
+      "Angular",
+      "TypeScript",
+      "REST APIs",
+      "English/Arabic (RTL)"
+    ],
+    "role": "Senior Frontend Developer",
+    "projectType": "Enterprise web application",
+    "businessDomain": "Government",
+    "featured": true,
+    "filterTags": [
+      "angular",
+      "enterprise",
+      "dashboard"
+    ],
+    "overview": "Enterprise-scale web application for the Statistics Centre Abu Dhabi (SCAD) that visualizes and analyzes real-time census and demographic data across the Emirate of Abu Dhabi, giving government stakeholders accurate, real-time insight for planning and decision-making.",
+    "keyFeatures": [
+      "Interactive dashboards and reports for population statistics, labor force, housing, real estate and other key indicators",
+      "Real-time data through API integrations",
+      "Responsive, multilingual (English/Arabic) interfaces with RTL support"
+    ]
+  },
+  {
+    "name": "Tabib Group",
+    "slug": "tabib-group",
+    "shortDescription": "Healthcare communication platform for doctor-patient interactions and medical service management.",
+    "category": "healthcare",
+    "technologyStack": [
+      "Angular"
+    ],
+    "role": "Frontend Developer",
+    "projectType": "CMS / B2C platform",
+    "businessDomain": "Healthcare",
+    "featured": false,
+    "filterTags": [
+      "angular",
+      "healthcare"
+    ],
+    "liveDemoUrl": "https://tabibgroup.net/",
+    "overview": "Healthcare portal built at Veroke Technologies for a client in the Middle East, supporting communication between doctors and patients and the management of medical services."
+  },
+  {
+    "name": "ThriftPlan",
+    "slug": "thriftplan",
+    "shortDescription": "Investment platform for employers and employees, focused on stock opportunities.",
+    "category": "fintech",
+    "technologyStack": [
+      "Angular"
+    ],
+    "role": "Frontend Developer",
+    "projectType": "B2C platform",
+    "businessDomain": "Fintech / Investments",
+    "featured": false,
+    "filterTags": [
+      "angular",
+      "fintech"
+    ],
+    "overview": "Investment platform built at Veroke Technologies that connects employers and employees around stock investment opportunities."
+  },
+  {
+    "name": "Art Station",
+    "slug": "art-station",
+    "shortDescription": "Event management platform for artists, exhibitions, workshops and event bookings across the Middle East.",
+    "category": "enterprise-applications",
+    "technologyStack": [
+      "Angular"
+    ],
+    "role": "Frontend Developer",
+    "projectType": "CMS / B2C platform",
+    "businessDomain": "Arts & Events",
+    "featured": false,
+    "filterTags": [
+      "angular",
+      "other"
+    ],
+    "overview": "Event management platform built at Veroke Technologies for artists, exhibitions, workshops and event bookings across the Middle East."
+  },
+  {
+    "name": "VirtualTradeShow",
+    "slug": "virtual-trade-show",
+    "shortDescription": "Online platform for workshops, seminars and virtual classes.",
+    "category": "enterprise-applications",
+    "technologyStack": [
+      "Angular"
+    ],
+    "role": "Frontend Developer",
+    "projectType": "CMS / B2C platform",
+    "businessDomain": "Virtual Events",
+    "featured": false,
+    "filterTags": [
+      "angular",
+      "other"
+    ],
+    "overview": "Online platform built at Veroke Technologies for hosting workshops, seminars and virtual classes."
+  }
+]
