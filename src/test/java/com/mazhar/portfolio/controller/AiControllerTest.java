@@ -101,6 +101,24 @@ class AiControllerTest {
     }
 
     @Test
+    void aNullMessageElementIsA400NotAnInternalError() throws Exception {
+        send("{\"messages\":[null]}")
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.success", is(false)));
+        send("{\"messages\":[{\"role\":\"user\",\"content\":\"hi\"},null]}").andExpect(status().isBadRequest());
+        verify(chatService, never()).chat(anyList());
+    }
+
+    @Test
+    void anOversizedBodyIsRefusedWith413BeforeItIsParsed() throws Exception {
+        send(oneUserMessage("x".repeat(70_000)))
+            .andExpect(status().isPayloadTooLarge())
+            .andExpect(jsonPath("$.success", is(false)))
+            .andExpect(jsonPath("$.message", is("The request is too large.")));
+        verify(chatService, never()).chat(anyList());
+    }
+
+    @Test
     void rejectsABlankMessage() throws Exception {
         send(oneUserMessage("   ")).andExpect(status().isBadRequest());
     }

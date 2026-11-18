@@ -148,6 +148,22 @@ class AnthropicChatProviderTest {
     }
 
     @Test
+    void aReplyCutOffAtMaxTokensIsMarkedAsCutShortInsteadOfPassingForComplete() {
+        respond(200, "[{\"type\":\"text\",\"text\":\"The first half of an answer and then\"}]", "max_tokens");
+
+        String reply = provider().reply(List.of(new ChatTurn(ChatTurn.Role.USER, "Hi")));
+
+        assertThat(reply).startsWith("The first half of an answer and then");
+        assertThat(reply).endsWith(AnthropicChatProvider.TRUNCATED_NOTICE);
+    }
+
+    @Test
+    void aReplyThatFinishedNormallyGetsNoNotice() {
+        assertThat(provider().reply(List.of(new ChatTurn(ChatTurn.Role.USER, "Hi"))))
+            .doesNotContain("cut short");
+    }
+
+    @Test
     void answersARefusalWithAFixedFriendlyReply() {
         respond(200, "[]", "refusal");
 

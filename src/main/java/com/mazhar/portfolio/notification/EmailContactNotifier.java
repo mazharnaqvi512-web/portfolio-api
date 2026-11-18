@@ -3,6 +3,9 @@ package com.mazhar.portfolio.notification;
 import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
 import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -22,27 +25,65 @@ import com.mazhar.portfolio.entity.ContactMessage;
  * <p>Failures are logged by message id and exception type only (never the visitor's data) and
  * never propagate: the message is already safely stored.
  */
-public class EmailContactNotifier implements ContactNotifier {
+public class EmailContactNotifier implements ContactNotifier, AutoCloseable {
 
     private static final Logger log = LoggerFactory.getLogger(EmailContactNotifier.class);
 
     private static final int MAX_SUBJECT_PART = 80;
+    private static final long DRAIN_SECONDS_ON_CLOSE = 15;
 
     private final JavaMailSender mailSender;
     private final String to;
     private final String from;
     private final Executor executor;
+    /** Set only when this notifier created its own thread (see withBackgroundThread); null when the caller supplied the executor. */
+    private final ExecutorService ownedExecutor;
 
     public EmailContactNotifier(JavaMailSender mailSender, String to, String from, Executor executor) {
+        this(mailSender, to, from, executor, null);
+    }
+
+    private EmailContactNotifier(JavaMailSender mailSender, String to, String from, Executor executor, ExecutorService ownedExecutor) {
         this.mailSender = mailSender;
         this.to = to;
         this.from = from;
         this.executor = executor;
+        this.ownedExecutor = ownedExecutor;
+    }
+
+    /**
+     * Sends from one background thread owned by the notifier. Contact mail is low volume (the endpoint is rate
+     * limited) and order does not matter. The thread is deliberately not a Spring bean: any Executor bean would
+     * make Spring Boot drop its own default task executor.
+     */
+    public static EmailContactNotifier withBackgroundThread(JavaMailSender mailSender, String to, String from) {
+        ExecutorService thread = Executors.newSingleThreadExecutor(runnable -> {
+            Thread t = new Thread(runnable, "contact-mail");
+            t.setDaemon(true);
+            return t;
+        });
+        return new EmailContactNotifier(mailSender, to, from, thread, thread);
     }
 
     @Override
     public void newMessage(ContactMessage message) {
         executor.execute(() -> send(message));
+    }
+
+    /**
+     * Called by Spring when the application shuts down. Lets notifications that are still queued finish (up to a
+     * limit), so a redeploy does not silently drop a visitor's message email.
+     */
+    @Override
+    public void close() throws InterruptedException {
+        if (ownedExecutor == null) {
+            return;
+        }
+        ownedExecutor.shutdown();
+        if (!ownedExecutor.awaitTermination(DRAIN_SECONDS_ON_CLOSE, TimeUnit.SECONDS)) {
+            log.warn("Contact notifications were still being sent at shutdown and were abandoned");
+            ownedExecutor.shutdownNow();
+        }
     }
 
     private void send(ContactMessage message) {

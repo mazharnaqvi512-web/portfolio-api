@@ -74,6 +74,25 @@ class AiChatRateLimitTest {
     }
 
     @Test
+    void anIpv6ClientCannotDodgeTheLimitByChangingAddressWithinItsOwn64() throws Exception {
+        when(chatService.chat(anyList())).thenReturn("ok");
+
+        mockMvc.perform(post("/api/ai/chat").with(fromAddress("2001:db8:aaaa:bbbb::1"))
+            .contentType(MediaType.APPLICATION_JSON).content(BODY)).andExpect(status().isOk());
+        mockMvc.perform(post("/api/ai/chat").with(fromAddress("2001:db8:aaaa:bbbb::2"))
+            .contentType(MediaType.APPLICATION_JSON).content(BODY)).andExpect(status().isOk());
+
+        // Same /64, third request: over the limit of 2, whatever the low bits say.
+        mockMvc.perform(post("/api/ai/chat").with(fromAddress("2001:db8:aaaa:bbbb:1234:5678:9abc:def0"))
+                .contentType(MediaType.APPLICATION_JSON).content(BODY))
+            .andExpect(status().isTooManyRequests());
+
+        // A different /64 is a different client.
+        mockMvc.perform(post("/api/ai/chat").with(fromAddress("2001:db8:aaaa:cccc::1"))
+            .contentType(MediaType.APPLICATION_JSON).content(BODY)).andExpect(status().isOk());
+    }
+
+    @Test
     void countsInvalidRequestsToo() throws Exception {
         for (int i = 0; i < 2; i++) {
             mockMvc.perform(post("/api/ai/chat").with(fromAddress("10.1.0.4"))

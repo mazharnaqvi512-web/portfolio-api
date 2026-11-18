@@ -6,8 +6,8 @@ import static org.mockito.Mockito.when;
 
 import com.icegreen.greenmail.junit5.GreenMailExtension;
 import com.icegreen.greenmail.util.ServerSetupTest;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.ArrayList;
+import java.util.List;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
@@ -21,12 +21,14 @@ class NotificationConfigTest {
     @RegisterExtension
     GreenMailExtension greenMail = new GreenMailExtension(ServerSetupTest.SMTP.dynamicPort());
 
-    private final ExecutorService executor = Executors.newSingleThreadExecutor();
     private final NotificationConfig config = new NotificationConfig();
+    private final List<AutoCloseable> toClose = new ArrayList<>();
 
     @AfterEach
-    void shutDown() {
-        executor.shutdownNow();
+    void shutDown() throws Exception {
+        for (AutoCloseable closeable : toClose) {
+            closeable.close();
+        }
     }
 
     @SuppressWarnings("unchecked")
@@ -44,7 +46,11 @@ class NotificationConfigTest {
     }
 
     private ContactNotifier notifier(JavaMailSender sender, String to, String from, String host) {
-        return config.contactNotifier(provider(sender), executor, to, from, host);
+        ContactNotifier notifier = config.contactNotifier(provider(sender), to, from, host);
+        if (notifier instanceof AutoCloseable closeable) {
+            toClose.add(closeable);
+        }
+        return notifier;
     }
 
     @Test

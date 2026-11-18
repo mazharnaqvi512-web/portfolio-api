@@ -35,4 +35,15 @@ public class DailyCap {
         used++;
         return true;
     }
+
+    /**
+     * Gives back a slot taken by {@link #tryAcquire()} when the call it paid for produced nothing (the provider
+     * failed), so an outage cannot use up the day's budget without any money being spent. A release that lands
+     * just after UTC midnight may credit the new day by one; that is harmless for an upper bound on spend.
+     */
+    public synchronized void release() {
+        if (used > 0) {
+            used--;
+        }
+    }
 }

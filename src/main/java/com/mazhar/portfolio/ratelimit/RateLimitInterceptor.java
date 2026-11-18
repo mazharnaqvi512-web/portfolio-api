@@ -14,7 +14,8 @@ import com.mazhar.portfolio.dto.ApiResponse;
 /**
  * Runs before argument validation, so malformed submissions count toward the
  * limit too — otherwise a bot could probe the endpoint unthrottled with
- * invalid bodies. Keyed on the connection's remote address; behind a reverse
+ * invalid bodies. Keyed on the connection's remote address (an IPv6 client by its
+ * /64 prefix, see ClientAddressKey); behind a reverse
  * proxy, configure server.forward-headers-strategy so that address is the
  * real client rather than the proxy (and don't read X-Forwarded-For here
  * directly — a client can forge it).
@@ -35,7 +36,7 @@ public class RateLimitInterceptor implements HandlerInterceptor {
             return true;
         }
 
-        SlidingWindowRateLimiter.Decision decision = limiter.tryAcquire(request.getRemoteAddr());
+        SlidingWindowRateLimiter.Decision decision = limiter.tryAcquire(ClientAddressKey.of(request.getRemoteAddr()));
         if (decision.allowed()) {
             return true;
         }

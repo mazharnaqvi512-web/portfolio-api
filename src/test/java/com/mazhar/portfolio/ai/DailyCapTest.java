@@ -64,6 +64,29 @@ class DailyCapTest {
     }
 
     @Test
+    void releaseGivesASlotBack() {
+        DailyCap cap = new DailyCap(1, new MovableClock("2026-11-04T08:00:00Z"));
+        assertThat(cap.tryAcquire()).isTrue();
+        assertThat(cap.tryAcquire()).isFalse();
+
+        cap.release();
+
+        assertThat(cap.tryAcquire()).isTrue();
+        assertThat(cap.tryAcquire()).isFalse();
+    }
+
+    @Test
+    void releasingWithNothingAcquiredNeverCreatesExtraCapacity() {
+        DailyCap cap = new DailyCap(1, new MovableClock("2026-11-04T08:00:00Z"));
+
+        cap.release();
+        cap.release();
+
+        assertThat(cap.tryAcquire()).isTrue();
+        assertThat(cap.tryAcquire()).isFalse();
+    }
+
+    @Test
     void refusesACapBelowOne() {
         assertThatThrownBy(() -> new DailyCap(0, Clock.systemUTC())).isInstanceOf(IllegalArgumentException.class);
     }

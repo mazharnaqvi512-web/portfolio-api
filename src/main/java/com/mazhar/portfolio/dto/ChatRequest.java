@@ -3,6 +3,7 @@ package com.mazhar.portfolio.dto;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import java.util.List;
@@ -13,7 +14,8 @@ import java.util.List;
  * untrusted input (including "assistant" turns, which a caller can fabricate).
  */
 public record ChatRequest(
-    @NotEmpty @Size(max = 10, message = "must contain at most 10 messages") List<@Valid ChatMessage> messages
+    // @NotNull on the element matters: @Valid alone treats a null element as valid, and the controller would then throw an NPE (a 500).
+    @NotEmpty @Size(max = 10, message = "must contain at most 10 messages") List<@NotNull @Valid ChatMessage> messages
 ) {
 
     public record ChatMessage(

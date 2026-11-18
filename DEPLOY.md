@@ -33,7 +33,9 @@ Set these in the host's dashboard, never in a file you commit.
 | `ANTHROPIC_API_KEY` | optional | Turns the AI assistant on; without it `/api/ai/chat` answers 503 |
 | `CONTACT_NOTIFY_TO`, `MAIL_HOST`, `MAIL_PORT`, `MAIL_USERNAME`, `MAIL_PASSWORD` | optional | Emails each contact message to you; see the README, "Email notifications" |
 
-The rest (`ai.*`, `contact.*`) have defaults in `application.properties`; override them the same way with environment variables (`AI_DAILY_CAP=50`, `AI_ANTHROPIC_MODEL=claude-haiku-5-5`, and so on).
+The rest (`ai.*`, `contact.*`, `request.*`) have defaults in `application.properties`; override them the same way with environment variables (`AI_DAILY_CAP=50`, `AI_ANTHROPIC_MODEL=claude-haiku-5-5`, `AI_ANTHROPIC_MAX_RETRIES=1`, and so on). (Setting `AI_RATE_LIMIT_MAX_REQUESTS=2` was checked to take effect this way on the real jar.)
+
+**SMTP over TLS.** The mail settings require STARTTLS and check the server's certificate host name, so the password is never sent unencrypted. That fits port 587 (Gmail and most providers). A provider that only offers port 465 (implicit TLS) needs `SPRING_MAIL_PROPERTIES_MAIL_SMTP_SSL_ENABLE=true`, `SPRING_MAIL_PROPERTIES_MAIL_SMTP_STARTTLS_ENABLE=false` and `SPRING_MAIL_PROPERTIES_MAIL_SMTP_STARTTLS_REQUIRED=false` (how Spring turns these variable names into mail properties has not been tested here, so confirm with a test message). A plain-text relay without TLS is deliberately not supported.
 
 ## The database
 

@@ -14,6 +14,7 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.ApplicationContext;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
@@ -47,6 +48,9 @@ class ContactEmailEndToEndTest {
     @Autowired
     private ContactNotifier notifier;
 
+    @Autowired
+    private ApplicationContext context;
+
     @BeforeEach
     void emptyInbox() throws Exception {
         greenMail.purgeEmailFromAllMailboxes();
@@ -62,6 +66,12 @@ class ContactEmailEndToEndTest {
     @Test
     void emailingIsSwitchedOnByTheConfiguration() {
         assertThat(notifier).isInstanceOf(EmailContactNotifier.class);
+    }
+
+    @Test
+    void theMailThreadIsNotAnExecutorBeanThatWouldDisplaceBootsDefaultTaskExecutor() {
+        assertThat(context.containsBean("contactMailExecutor")).isFalse();
+        assertThat(context.containsBean("applicationTaskExecutor")).isTrue();
     }
 
     @Test

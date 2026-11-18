@@ -31,7 +31,9 @@ Starts on `http://localhost:8080`. CORS is open to `http://localhost:4200` (the 
 | `ai.anthropic.max-tokens` / `ai.anthropic.timeout` | — | `4096` / `30s` | Cap on one reply (thinking included) and on the whole call. |
 | `ai.anthropic.base-url` | — | *(empty)* | Anthropic's own endpoint when empty. Set only to use a proxy or a local stand-in API for development. |
 | `ai.rate-limit.max-requests` / `ai.rate-limit.window` | — | `10` / `10m` | Per client address, on `POST /api/ai/chat` only. |
-| `ai.daily-cap` | — | `100` | Total assistant calls per UTC day across all visitors. |
+| `ai.daily-cap` | — | `100` | Total assistant calls per UTC day across all visitors (calls that fail give their slot back). |
+| `ai.anthropic.max-retries` | — | `1` | Automatic retries after a timeout or 5xx. Worst-case wait is `timeout x (retries + 1)`. |
+| `request.max-body-bytes` | — | `65536` | Largest JSON body accepted by `POST /api/contact` and `POST /api/ai/chat`; above it the answer is 413, whether or not the client declared a length. |
 | `spring.datasource.*` | — | file H2 | See "Storage". |
 
 ## Endpoints (starter slice)
@@ -92,7 +94,7 @@ Body: `{ "messages": [ { "role": "user" | "assistant", "content": "..." }, ... ]
 
 **Turning it on.** Set the `ANTHROPIC_API_KEY` environment variable before starting the API. The key is read from configuration only, never logged and never sent to the browser. Without it the endpoint answers 503 rather than faking a reply.
 
-**Cost.** Every call is billed. The default model is `claude-opus-5-5` (about $4 per million input tokens and $20 per million output tokens at the time of writing; check current prices). For a public portfolio chat, `claude-haiku-5-5` is far cheaper, so consider `ai.anthropic.model=claude-haiku-5-5`. Spend is bounded three ways: a per-address rate limit (default 10 per 10 minutes), a global daily cap (default 100 calls, in memory, so it resets on restart), and a limit on reply length. `AnthropicChatProviderTest` runs the real SDK against a local stand-in API, so those tests need no key and cost nothing.
+**Cost.** Every call is billed. The default model is `claude-opus-5-5` (about $4 per million input tokens and $20 per million output tokens at the time of writing; check current prices). For a public portfolio chat, `claude-haiku-5-5` is far cheaper, so consider `ai.anthropic.model=claude-haiku-5-5`. Spend is bounded three ways: a per-address rate limit (default 10 per 10 minutes), a global daily cap (default 100 calls, in memory, so it resets on restart), and a limit on reply length. The cap counts calls that produced a reply: if the provider fails (outage, timeout, no key) the slot is given back, so an outage cannot use up the day's budget. The SDK's own retries are limited to one (`ai.anthropic.max-retries`), so a stuck provider holds a request for at most about `timeout x 2`. A reply that stops at `max_tokens` ends with a "cut short" notice instead of passing for a finished answer, and the log suggests raising the limit. `AnthropicChatProviderTest` runs the real SDK against a local stand-in API, so those tests need no key and cost nothing.
 
 **Not done yet.** Replies are not streamed (the visitor waits for the whole answer), and the server-side refusal `fallbacks` option is not enabled; a refusal is answered with a fixed polite message.
 
@@ -100,7 +102,7 @@ Body: `{ "messages": [ { "role": "user" | "assistant", "content": "..." }, ... ]
 
 At most 5 `POST /api/contact` requests per client address per 10 minutes (`contact.rate-limit.max-requests` / `contact.rate-limit.window` in `application.properties`). Over the limit returns `429` with a `Retry-After` header (seconds) and the usual error envelope. Invalid submissions count too, so malformed bodies can't be used to probe the endpoint for free; rejected attempts aren't recorded, so hammering it doesn't extend the wait. CORS preflight requests aren't counted.
 
-Limits are kept in memory, per process — they reset on restart and aren't shared between instances (a shared store such as Redis would be needed before running more than one). The client is identified by the connection's remote address; behind a reverse proxy (every hosting platform has one) that address is the proxy's, so **all visitors would share one limit** until you set `FORWARD_HEADERS_STRATEGY=native` (see [DEPLOY.md](DEPLOY.md)). The code deliberately doesn't read `X-Forwarded-For` itself, since clients can forge it; by default (strategy off) a forged header is ignored.
+Limits are kept in memory, per process — they reset on restart and aren't shared between instances (a shared store such as Redis would be needed before running more than one). The client is identified by the connection's remote address, except that an IPv6 client is identified by its /64 prefix (it normally controls a whole /64, so keying on the full address would let it dodge the limit by changing address on every request); behind a reverse proxy (every hosting platform has one) that address is the proxy's, so **all visitors would share one limit** until you set `FORWARD_HEADERS_STRATEGY=native` (see [DEPLOY.md](DEPLOY.md)). The code deliberately doesn't read `X-Forwarded-For` itself, since clients can forge it; by default (strategy off) a forged header is ignored.
 
 ### Email notifications
 
@@ -118,6 +120,8 @@ What it does and does not do:
 - It is sent from a background thread, **after** the message is stored. A mail problem never makes the visitor's request fail; it is logged by message id and exception type only (never names, emails or message text).
 - Anything the visitor typed is untrusted. Control characters are stripped before they reach the subject, the visitor's address is only used as `Reply-To` if it parses strictly, and the body is never HTML. (JavaMail already neutralises line breaks in subjects; this is a second layer.) Spam caught by the honeypot is neither stored nor emailed.
 - The SMTP timeouts are 5 seconds, so a stuck mail server cannot hang a thread.
+- The connection must use STARTTLS (`starttls.required`) and the server's certificate must match its host (`ssl.checkserveridentity`). Without "required", JavaMail quietly carries on unencrypted when STARTTLS is missing, and the SMTP password would travel in clear text. Port 587 works as configured; port 465 (implicit TLS) needs different settings, see DEPLOY.md.
+- Mail is sent from one background thread that the notifier owns. On a graceful shutdown it finishes the notifications still queued (up to 15 seconds), so a redeploy does not drop a visitor's message email. Because the thread is not an `Executor` bean, Spring Boot keeps its own default task executor.
 - Tests send real mail to an in-process SMTP server (GreenMail), so they need no account.
 
 ### Storage

@@ -1,11 +1,8 @@
 package com.mazhar.portfolio.notification;
 
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -21,20 +18,9 @@ public class NotificationConfig {
 
     private static final Logger log = LoggerFactory.getLogger(NotificationConfig.class);
 
-    /** One background thread: contact mail is low volume (the endpoint is rate limited), and order does not matter. */
-    @Bean(destroyMethod = "shutdown")
-    ExecutorService contactMailExecutor() {
-        return Executors.newSingleThreadExecutor(runnable -> {
-            Thread thread = new Thread(runnable, "contact-mail");
-            thread.setDaemon(true);
-            return thread;
-        });
-    }
-
     @Bean
     ContactNotifier contactNotifier(
         ObjectProvider<JavaMailSender> mailSender,
-        @Qualifier("contactMailExecutor") ExecutorService executor,
         @Value("${contact.notify.to:}") String to,
         @Value("${contact.notify.from:}") String from,
         @Value("${spring.mail.host:}") String host
@@ -52,7 +38,8 @@ public class NotificationConfig {
         // explicit sender, fall back to the recipient (the owner's own address), which also works there.
         String effectiveFrom = isBlank(from) ? to : from;
         log.info("Contact email notifications enabled (mail host {})", host);
-        return new EmailContactNotifier(sender, to, effectiveFrom, executor);
+        // The notifier is AutoCloseable, so Spring closes it at shutdown and it finishes any queued mail first.
+        return EmailContactNotifier.withBackgroundThread(sender, to, effectiveFrom);
     }
 
     private static boolean isBlank(String value) {

@@ -5,6 +5,7 @@ import com.anthropic.client.okhttp.AnthropicOkHttpClient;
 import com.anthropic.models.messages.OutputConfig;
 import java.time.Clock;
 import java.time.Duration;
+import java.util.Locale;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -29,20 +30,24 @@ public class AiConfig {
         @Value("${ai.anthropic.max-tokens:4096}") long maxTokens,
         @Value("${ai.anthropic.effort:low}") String effort,
         @Value("${ai.anthropic.timeout:30s}") Duration timeout,
-        @Value("${ai.anthropic.base-url:}") String baseUrl
+        @Value("${ai.anthropic.base-url:}") String baseUrl,
+        @Value("${ai.anthropic.max-retries:1}") int maxRetries
     ) {
         if (apiKey == null || apiKey.isBlank()) {
             log.info("AI assistant disabled: no Anthropic API key configured (POST /api/ai/chat answers 503)");
             return new UnconfiguredChatProvider();
         }
-        AnthropicOkHttpClient.Builder builder = AnthropicOkHttpClient.builder().apiKey(apiKey).timeout(timeout);
+        // The SDK retries timeouts and 5xx on its own (default 2). Each retry can wait out the full timeout, so the
+        // worst case is timeout x (maxRetries + 1) while the visitor waits and a request thread is held: keep it small.
+        AnthropicOkHttpClient.Builder builder =
+            AnthropicOkHttpClient.builder().apiKey(apiKey).timeout(timeout).maxRetries(maxRetries);
         // Only for pointing at a proxy or a local stand-in API (development, demos); empty means Anthropic's own endpoint.
         if (baseUrl != null && !baseUrl.isBlank()) {
             builder.baseUrl(baseUrl);
         }
         AnthropicClient client = builder.build();
-        log.info("AI assistant enabled: model={} effort={} maxTokens={} baseUrl={}",
-            model, effort, maxTokens, baseUrl == null || baseUrl.isBlank() ? "(default)" : baseUrl);
+        log.info("AI assistant enabled: model={} effort={} maxTokens={} maxRetries={} baseUrl={}",
+            model, effort, maxTokens, maxRetries, baseUrl == null || baseUrl.isBlank() ? "(default)" : baseUrl);
         return new AnthropicChatProvider(client, model, maxTokens, parseEffort(effort), knowledge.systemPrompt());
     }
 
@@ -52,7 +57,8 @@ public class AiConfig {
     }
 
     static OutputConfig.Effort parseEffort(String value) {
-        return switch (value.trim().toLowerCase()) {
+        // Locale.ROOT: in a Turkish locale "MEDIUM".toLowerCase() is "medıum" (dotless i) and would match nothing.
+        return switch (value.trim().toLowerCase(Locale.ROOT)) {
             case "low" -> OutputConfig.Effort.LOW;
             case "medium" -> OutputConfig.Effort.MEDIUM;
             case "high" -> OutputConfig.Effort.HIGH;

@@ -27,6 +27,12 @@ public class AiChatService {
         if (!dailyCap.tryAcquire()) {
             throw new AiDailyLimitException();
         }
-        return provider.reply(turns);
+        try {
+            return provider.reply(turns);
+        } catch (RuntimeException e) {
+            // Nothing was produced (outage, timeout, no key), so the slot was not really used.
+            dailyCap.release();
+            throw e;
+        }
     }
 }

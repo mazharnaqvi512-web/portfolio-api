@@ -10,6 +10,8 @@ import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 import com.mazhar.portfolio.exception.AiDailyLimitException;
+import com.mazhar.portfolio.exception.AiProviderException;
+import com.mazhar.portfolio.exception.AiUnavailableException;
 import com.mazhar.portfolio.exception.InvalidChatRequestException;
 
 class AiChatServiceTest {
@@ -68,6 +70,45 @@ class AiChatServiceTest {
 
         assertThatThrownBy(() -> service.chat(List.of(user("3")))).isInstanceOf(AiDailyLimitException.class);
         assertThat(received).hasSize(2);
+    }
+
+    @Test
+    void aFailedProviderCallDoesNotUseUpTheDailyBudget() {
+        boolean[] failNext = {true};
+        AiChatProvider flaky = turns -> {
+            if (failNext[0]) {
+                throw new AiProviderException("provider down");
+            }
+            return "reply";
+        };
+        AiChatService service = new AiChatService(flaky, new DailyCap(1, Clock.fixed(Instant.parse("2026-11-04T10:00:00Z"), ZoneOffset.UTC)));
+
+        assertThatThrownBy(() -> service.chat(List.of(user("1")))).isInstanceOf(AiProviderException.class);
+        failNext[0] = false;
+
+        // With a cap of 1, this only succeeds if the failed call above gave its slot back.
+        assertThat(service.chat(List.of(user("2")))).isEqualTo("reply");
+    }
+
+    @Test
+    void anUnconfiguredAssistantDoesNotUseUpTheDailyBudgetEither() {
+        DailyCap cap = new DailyCap(1, Clock.fixed(Instant.parse("2026-11-04T10:00:00Z"), ZoneOffset.UTC));
+        AiChatService off = new AiChatService(new UnconfiguredChatProvider(), cap);
+
+        for (int i = 0; i < 3; i++) {
+            assertThatThrownBy(() -> off.chat(List.of(user("hi")))).isInstanceOf(AiUnavailableException.class);
+        }
+        // Still a slot left for a provider that works.
+        assertThat(new AiChatService(provider, cap).chat(List.of(user("hi")))).isEqualTo("reply");
+    }
+
+    @Test
+    void aSuccessfulCallStillCountsAgainstTheBudget() {
+        AiChatService service = service(1);
+
+        service.chat(List.of(user("1")));
+
+        assertThatThrownBy(() -> service.chat(List.of(user("2")))).isInstanceOf(AiDailyLimitException.class);
     }
 
     @Test

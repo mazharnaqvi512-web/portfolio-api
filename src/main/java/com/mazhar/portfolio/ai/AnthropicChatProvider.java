@@ -27,6 +27,8 @@ public class AnthropicChatProvider implements AiChatProvider {
 
     private static final Logger log = LoggerFactory.getLogger(AnthropicChatProvider.class);
 
+    static final String TRUNCATED_NOTICE = "\n\n[This reply was cut short. You can ask me to continue.]";
+
     static final String REFUSAL_REPLY =
         "I can't help with that request. You can ask me about Syed Mazhar's experience, projects or skills.";
 
@@ -95,6 +97,12 @@ public class AnthropicChatProvider implements AiChatProvider {
         if (text.isEmpty()) {
             log.warn("Anthropic returned no text: stop_reason={}", response.stopReason().orElse(null));
             throw new AiProviderException("Anthropic returned an empty reply");
+        }
+        // Thinking tokens count toward max_tokens too, so a long reply can stop mid-sentence. Say so instead of
+        // presenting the cut-off text as a finished answer, and tell the owner to raise the limit.
+        if (response.stopReason().filter(StopReason.MAX_TOKENS::equals).isPresent()) {
+            log.warn("Anthropic reply was cut off at max_tokens={}; consider raising ai.anthropic.max-tokens", maxTokens);
+            return text + TRUNCATED_NOTICE;
         }
         return text;
     }

@@ -21,6 +21,11 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ApiResponse.error("Validation failed", errors));
     }
 
+    @ExceptionHandler(RequestTooLargeException.class)
+    public ResponseEntity<ApiResponse<Void>> handleTooLarge(RequestTooLargeException ex) {
+        return ResponseEntity.status(HttpStatus.PAYLOAD_TOO_LARGE).body(ApiResponse.error("The request is too large.", List.of()));
+    }
+
     @ExceptionHandler(InvalidChatRequestException.class)
     public ResponseEntity<ApiResponse<Void>> handleInvalidChat(InvalidChatRequestException ex) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ApiResponse.error(ex.getMessage(), List.of()));
